@@ -168,6 +168,7 @@ const SpotifyLogin = () => {
                 <meta property="og:url" content={window.location.href} />
                 <meta property="og:image" content={darkLogo} /> {/* Use the dynamic currentLogo for the image */}
             </Helmet>
+
             <div className="max-w-2xl w-full mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 space-y-6 text-center">
                 {userDetails ? (
                     <>
@@ -180,12 +181,15 @@ const SpotifyLogin = () => {
                         <ResponsiveMasonry columnsCountBreakPoints={{350: 2, 750: 2, 900: 2}}>
                             <Masonry gutter="20px">
                                 <button onClick={handleLogout}
-                                        className="flex items-center justify-center w-full px-4 py-2 border border-transparent text-base font-medium hover:font-bold rounded-md text-white bg-red-600 hover:bg-red-700 transition-transform duration-200 hover:scale-105">
+                                        className="flex items-center justify-center w-full px-4 py-2 border border-transparent text-base rounded-2xl text-white bg-red-600 hover:bg-red-700 transition-transform duration-200 hover:scale-105
+                                        animate-none hover:animate-pulse
+                                        font-bold">
                                     Logout <FaSignOutAlt className="ml-2"/>
                                 </button>
 
                                 <button onClick={handleContinue}
-                                        className="flex items-center justify-center w-full mb-4 px-4 py-2 border border-transparent text-base font-medium hover:font-bold rounded-md text-white bg-green-600 hover:bg-green-700 transition-transform duration-200 hover:scale-105">
+                                        className="flex items-center justify-center w-full mb-4 px-4 py-2 border border-transparent text-base rounded-2xl text-white bg-green-600 hover:bg-green-700 transition-transform duration-200 hover:scale-105
+                                        animate-none hover:animate-pulse font-bold">
                                     Continue <FaArrowRight className="ml-2"/>
                                 </button>
                             </Masonry>
@@ -205,10 +209,13 @@ const SpotifyLogin = () => {
                         <img src={currentLogo} alt="Spotify" className="mx-auto h-32"/>
                         <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Welcome to HarmonizeAI</h2>
                         <p className="text-lg text-gray-600 dark:text-gray-300">Experience music tailored to your emotions.</p>
+
                         <button onClick={handleLogin}
-                                className="mt-6 w-full flex justify-center items-center px-6 py-3 border border-transparent text-lg font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-transform duration-200 hover:scale-105">
+                                className="mt-6 w-full flex justify-center items-center px-6 py-3 border border-transparent text-lg rounded-3xl text-white bg-green-600 hover:bg-green-700 transition-transform duration-200 hover:scale-105
+                                animate-pulse hover:animate-none font-bold">
                             <FaSpotify className="mr-2 text-xl sm:text-2xl md:text-3xl lg:text-4xl"/> Login with Spotify
                         </button>
+
                         <div className="mt-8 text-left">
                             <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">HarmonizeAI Access:</h3>
                             <ul className="mt-2 text-sm text-gray-700 dark:text-gray-300 list-inside list-disc">

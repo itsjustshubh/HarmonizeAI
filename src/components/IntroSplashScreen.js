@@ -42,7 +42,7 @@ const IntroSplashScreen = () => {
                 <meta property="og:image" content={darkLogo} /> {/* Add the path to a representative image */}
             </Helmet>
             <div className="text-center">
-                <img src={currentLogo} alt="Logo" className="mx-auto h-48 animate-bounce"/>
+                <img src={currentLogo} alt="Logo" className="mx-auto h-48 animate-pulse"/>
                 <h1 className={`text-5xl font-bold my-4 transition-colors duration-500 ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>
                     Welcome to Harmonize AI
                 </h1>

@@ -39,13 +39,13 @@ const IntroPage = () => {
                 </ol>
                 <button
                     onClick={navigateToNext}
-                    className="mt-6 w-full flex justify-center items-center px-6 py-3 border border-transparent text-lg font-bold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition duration-150 ease-in-out hover:scale-105 animate-pulse hover:animate-none"
+                    className="mt-6 w-full flex justify-center items-center px-6 py-3 border border-transparent text-lg font-bold rounded-2xl text-white bg-indigo-600 hover:bg-indigo-700 transition duration-150 ease-in-out hover:scale-105 animate-pulse hover:animate-none"
                 >
                     Get Started
                     <FaPlay className="ml-2" />
                 </button>
                 <p className="text-sm text-gray-500 mt-4">
-                    We respect your privacy. Your Spotify data is used only for enhancing your music experience.
+                    We respect your privacy. Your Spotify data is used only for enhancing your music experience and is not saved anywhere only in terms of cookies.
                 </p>
             </div>
         </div>
