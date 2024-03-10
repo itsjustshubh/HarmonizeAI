@@ -306,7 +306,8 @@ const BiometricForm = () => {
                 <meta property="og:image" content={darkLogo} /> {/* Update with an appropriate image path */}
             </Helmet>
 
-            <div className="max-w-2xl w-full mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 space-y-6 text-center">
+            <div
+                className="max-w-6xl w-full mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 space-y-6">
                 <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100">
                     Biometric Data Submission
                 </h1>
@@ -593,7 +594,7 @@ const BiometricForm = () => {
                         <button
                             onClick={handleSubmit}
                             type="submit"
-                            className="w-full flex justify-center items-center py-3 px-6 border border-transparent shadow-lg text-lg font-semibold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200 ease-in-out hover:scale-105"
+                            className="w-full animate-pulse hover:animate-none flex justify-center items-center py-3 px-6 border border-transparent shadow-lg text-lg font-semibold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200 ease-in-out hover:scale-105"
                         >
                             <FaCheckCircle className="mr-2"/>
                             Submit Biometric Data

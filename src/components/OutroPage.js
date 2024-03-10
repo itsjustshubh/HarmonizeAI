@@ -11,7 +11,9 @@ const OutroPage = () => {
     };
 
     return (
-        <div className="bg-gradient-to-r from-purple-400 to-pink-500 dark:from-gray-700 dark:to-gray-900 min-h-screen flex items-center justify-center px-4 py-10">
+        <div
+            // className="bg-gradient-to-r from-purple-400 to-pink-500 dark:from-gray-700 dark:to-gray-900 min-h-screen flex items-center justify-center px-4 py-10"
+        >
             <Helmet>
                 <title>Thank You - HarmonizeAI</title>
                 <meta name="description" content="Thank you for experiencing your music journey with HarmonizeAI." />

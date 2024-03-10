@@ -48,31 +48,87 @@ const SpotifyLogin = () => {
         }
     }, [navigate]);
 
-    const fetchUserDetails = (token) => {
-        fetch('https://api.spotify.com/v1/me', {
-            headers: { Authorization: `Bearer ${token}` },
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    console.error('Error fetching user details:', data.error);
-                    return handleLogout(); // Logout on error
-                }
-                setUserDetails({
-                    id: data.id,
-                    displayName: data.display_name,
-                    email: data.email || 'Email not provided',
-                    profileImage: data.images.length > 0 ? data.images[0].url : undefined,
-                    country: data.country || 'Country not provided',
-                    followers: data.followers ? data.followers.total : 'Followers not provided',
-                });
-                // After setting user details, fetch the recently played tracks
-                fetchRecentlyPlayedTracks(token);
-            })
-            .catch(error => {
-                console.error('Error fetching user details:', error);
-                handleLogout(); // Ensure logout on fetch error
+    // Fetch User Details
+    const fetchUserDetails = async (token) => {
+        try {
+            const response = await fetch('https://api.spotify.com/v1/me', {
+                headers: { Authorization: `Bearer ${token}` },
             });
+            if (!response.ok) throw new Error('Response not OK');
+            const userData = await response.json();
+
+            if (userData.error) {
+                console.error('Error fetching user details:', userData.error);
+                handleLogout(); // Logout on error
+                return; // Exit the function
+            }
+
+            // Set basic user details
+            setUserDetails({
+                id: userData.id,
+                displayName: userData.display_name,
+                email: userData.email || 'Email not provided',
+                profileImage: userData.images.length > 0 ? userData.images[0].url : undefined,
+                country: userData.country || 'Country not provided',
+                subscriptionType: userData.product === 'premium' ? 'Premium' : 'Free',
+            });
+
+            // Fetch additional details like top artists
+            await fetchTopArtists(token);
+
+            // Fetch Top Tracks
+            await fetchTopTracks(token);
+
+        } catch (error) {
+            console.error('Error fetching user details:', error);
+            handleLogout(); // Ensure logout on fetch error
+        }
+    };
+
+    // Fetch Top Tracks
+    const fetchTopTracks = async (token) => {
+        try {
+            const response = await fetch('https://api.spotify.com/v1/me/top/tracks', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error('Response not OK');
+            const data = await response.json();
+
+            const topTracks = data.items.map(track => ({
+                name: track.name,
+                artist: track.artists.map(artist => artist.name).join(', '),
+                album: track.album.name
+            }));
+
+            setUserDetails(prevDetails => ({
+                ...prevDetails,
+                topTracks: topTracks
+            }));
+        } catch (error) {
+            console.error('Error fetching top tracks:', error);
+        }
+    };
+
+    // Fetch Top Artists
+    const fetchTopArtists = async (token) => {
+        try {
+            const response = await fetch('https://api.spotify.com/v1/me/top/artists', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error('Response not OK');
+            const data = await response.json();
+
+            // Extract artist names
+            const artists = data.items.map(artist => artist.name).join(', ');
+
+            // Update the userDetails state with the top artists
+            setUserDetails(prevDetails => ({
+                ...prevDetails,
+                topArtists: artists
+            }));
+        } catch (error) {
+            console.error('Error fetching top artists:', error);
+        }
     };
 
     const fetchAudioFeaturesForTrack = async (token, trackId) => {
@@ -141,9 +197,15 @@ const SpotifyLogin = () => {
     };
 
     const handleLogin = () => {
-        const clientId = 'b564775eab8f4d6e976a1179ff673e6c'; // Your actual Spotify Client ID
+        const clientId = 'b564775eab8f4d6e976a1179ff673e6c'; // Replace with your Spotify Client ID
         const redirectUri = encodeURIComponent(`${window.location.origin}/spotify-login`);
-        const scopes = ['user-read-private', 'user-read-email', 'user-read-recently-played', 'user-library-read'];
+        const scopes = [
+            'user-read-private',
+            'user-read-email',
+            'user-read-recently-played',
+            'user-library-read',
+            'user-top-read' // Include this scope
+        ];
         window.location.href = `https://accounts.spotify.com/authorize?response_type=token&client_id=${clientId}&scope=${encodeURIComponent(scopes.join(' '))}&redirect_uri=${redirectUri}&show_dialog=true`;
     };
 
@@ -155,6 +217,21 @@ const SpotifyLogin = () => {
     const handleContinue = () => {
         navigate('/biometric-form'); // Navigate to the next page
     };
+
+    // State to keep track of screen width
+    const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+    // Update screenWidth state on window resize
+    useEffect(() => {
+        const handleResize = () => setScreenWidth(window.innerWidth);
+        window.addEventListener('resize', handleResize);
+
+        // Cleanup listener on component unmount
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    // Determine the number of items to display based on screen width
+    const displayLimit = screenWidth < 768 ? 2 : 3; // Mobile: 3 items, Laptop: 5 items
 
     return (
         <div
@@ -171,34 +248,74 @@ const SpotifyLogin = () => {
                 <meta property="og:image" content={darkLogo} /> {/* Use the dynamic currentLogo for the image */}
             </Helmet>
 
-            <div className="max-w-2xl w-full mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 space-y-6 text-center">
+            <div className="max-w-3xl w-full mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-8 space-y-6 text-center">
                 {userDetails ? (
                     <>
-                        <img src={userDetails.profileImage || currentLogo} alt="Profile" className="mx-auto h-20 w-20 rounded-full"/>
-                        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Welcome, {userDetails.displayName}</h1>
-                        <p className="text-lg text-gray-600 dark:text-gray-300">ID: {userDetails.id}</p>
-                        <p className="text-lg text-gray-600 dark:text-gray-300">Email: {userDetails.email}</p>
-                        <p className="text-lg text-gray-600 dark:text-gray-300">Country: {userDetails.country}</p>
+                        <div className="flex flex-col items-center justify-center">
+                            <img
+                                src={userDetails.profileImage || currentLogo}
+                                alt="Profile"
+                                className="h-24 w-24 rounded-full shadow-lg"
+                            />
+                            <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100 mt-2">
+                                Hello {userDetails.displayName}
+                            </h1>
+                        </div>
 
-                        <ResponsiveMasonry columnsCountBreakPoints={{350: 2, 750: 2, 900: 2}}>
-                            <Masonry gutter="20px">
-                                <button onClick={handleLogout}
-                                        className="flex items-center justify-center w-full px-4 py-2 border border-transparent text-base rounded-2xl text-white bg-red-600 hover:bg-red-700 transition-transform duration-200 hover:scale-105
-                                        animate-none hover:animate-pulse
-                                        font-bold">
-                                    Logout <FaSignOutAlt className="ml-2"/>
-                                </button>
-
-                                <button onClick={handleContinue}
-                                        className="flex items-center justify-center w-full mb-4 px-4 py-2 border border-transparent text-base rounded-2xl text-white bg-green-600 hover:bg-green-700 transition-transform duration-200 hover:scale-105
-                                        animate-none hover:animate-pulse font-bold">
-                                    Continue <FaArrowRight className="ml-2"/>
-                                </button>
-                            </Masonry>
-                        </ResponsiveMasonry>
+                        <div className="mt-4 sm:grid sm:grid-cols-2 sm:gap-4">
+                            <div className="text-lg text-gray-600 dark:text-gray-300 text-left mb-4 sm:mb-0">
+                                {/* Left column content */}
+                                <p><strong>ID:</strong> {userDetails.id}</p>
+                                <p><strong>Email:</strong> {userDetails.email}</p>
+                                <p><strong>Country:</strong> {userDetails.country}</p>
+                                {
+                                    userDetails && userDetails.topArtists
+                                        ? <p><strong>Top Artists:</strong> {
+                                            userDetails.topArtists.split(', ').length > displayLimit
+                                                ? `${userDetails.topArtists.split(', ').slice(0, displayLimit).join(', ')} ...more`
+                                                : userDetails.topArtists
+                                        }</p>
+                                        : <p>Loading top artists...</p>
+                                }
+                                <p><strong>Subscription Type:</strong> {userDetails.subscriptionType}</p>
+                            </div>
+                            <div className="text-lg text-gray-600 dark:text-gray-300 text-left">
+                                {/* Right column content */}
+                                <p><strong>Your Top Tracks:</strong></p>
+                                {userDetails.topTracks && userDetails.topTracks.length > 0 ? (
+                                    <ul className="list-disc pl-5 text-gray-700 dark:text-gray-300">
+                                        {userDetails.topTracks.slice(0, displayLimit).map((track, index) => (
+                                            <li key={index}>{track.name} by {track.artist}</li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p>No top tracks available.</p>
+                                )}
+                            </div>
+                        </div>
 
                         <div className="mt-4">
-                            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">Your Saved Tracks:</h2>
+                            <ResponsiveMasonry columnsCountBreakPoints={{350: 1, 750: 2}}>
+                                <Masonry gutter="20px">
+                                    <button onClick={handleLogout}
+                                            className="flex items-center justify-center w-full px-4 py-2 border border-transparent text-base rounded-2xl text-white bg-red-600 hover:bg-red-700 transition-transform duration-200 hover:scale-105
+                                        animate-none hover:animate-pulse
+                                        font-bold">
+                                        Logout <FaSignOutAlt className="ml-2"/>
+                                    </button>
+
+                                    <button onClick={handleContinue}
+                                            className="flex items-center justify-center w-full mb-4 px-4 py-2 border border-transparent text-base rounded-2xl text-white bg-green-600 hover:bg-green-700 transition-transform duration-200 hover:scale-105
+                                        animate-none hover:animate-pulse font-bold">
+                                        Continue <FaArrowRight className="ml-2"/>
+                                    </button>
+                                </Masonry>
+                            </ResponsiveMasonry>
+                        </div>
+
+                        <div className="mt-4 text-left">
+                            <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">Your Saved
+                                Tracks:</h2>
                             <ul className="list-disc pl-5 text-gray-700 dark:text-gray-300">
                                 {savedTracks.map((track, index) => (
                                     <li key={index}>{track.name} by {track.artist} ({track.album})</li>
@@ -210,7 +327,8 @@ const SpotifyLogin = () => {
                     <>
                         <img src={currentLogo} alt="Spotify" className="mx-auto h-32"/>
                         <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Welcome to HarmonizeAI</h2>
-                        <p className="text-lg text-gray-600 dark:text-gray-300">Experience music tailored to your emotions.</p>
+                        <p className="text-lg text-gray-600 dark:text-gray-300">Experience music tailored to your
+                            emotions.</p>
 
                         <button onClick={handleLogin}
                                 className="mt-6 w-full flex justify-center items-center px-6 py-3 border border-transparent text-lg rounded-3xl text-white bg-green-600 hover:bg-green-700 transition-transform duration-200 hover:scale-105
@@ -219,21 +337,35 @@ const SpotifyLogin = () => {
                         </button>
 
                         <div className="mt-8 text-left">
-                            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">HarmonizeAI Access:</h3>
-                            <ul className="mt-2 text-sm text-gray-700 dark:text-gray-300 list-inside list-disc">
-                                <li>Access to your Spotify account data</li>
-                                <ul className="pl-6">
-                                    <li>Name, username, and profile picture</li>
-                                    <li>Followers and public playlists</li>
-                                </ul>
-                                <li>Analysis of your Spotify activity</li>
-                                <ul className="pl-6">
-                                    <li>Recently played content</li>
-                                    <li>Your most iconic tracks</li>
-                                </ul>
+                            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100">How HarmonizeAI
+                                Enhances Your Spotify Experience:</h3>
+
+                            <ul className="mt-3 text-md text-gray-700 dark:text-gray-300 list-inside list-disc">
+                                <li className="py-1.5">
+                                    <span
+                                        className="text-md font-semibold">Personalized Access to Your Spotify Data:</span>
+                                    <ul className="mt-2 pl-6 text-sm">
+                                        <li>Name, Username, and Profile Picture
+                                        </li>
+                                        <li>Followers and Public Playlists
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li className="py-1.5">
+                                    <span
+                                        className="text-md font-semibold py-6">In-Depth Analysis of Your Spotify Activity:</span>
+                                    <ul className="mt-2 pl-6 text-sm">
+                                    <li>Recently Played Content
+                                        </li>
+                                        <li>Your Iconic Tracks
+                                        </li>
+                                    </ul>
+                                </li>
                             </ul>
-                            <p className="mt-4 italic text-gray-700 dark:text-gray-300">
-                                We value your privacy and only use your data to enhance your music experience.
+
+                            <p className="mt-6 italic text-md text-gray-700 dark:text-gray-300">
+                                Your privacy matters to us. Your Spotify data is only used to tailor your music
+                                experience and is not stored or shared.
                             </p>
                         </div>
                     </>

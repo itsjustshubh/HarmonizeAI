@@ -56,3 +56,23 @@
   padding: 20px;
   z-index: 1000;
 }
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+.typing-effect {
+  display: inline-block;
+  overflow: hidden; /* Ensures the content is not revealed until the animation */
+  white-space: nowrap; /* Keeps the content on a single line */
+  letter-spacing: 0.15em; /* Adjust as needed */
+  animation: typing 2s steps(40, end), blink-caret 0.75s step-end infinite;
+  /* Adjust animation time and steps based on length of the longest word */
+}
+
+/* Optional: Animation to mimic the caret at the end of typing */
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: black; } /* Change to match the color of your text */
+}
