@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
@@ -6,6 +6,7 @@ import { getAllUsers } from '../data/Users';
 import {FaCheckCircle} from "react-icons/fa";
 import {Helmet} from "react-helmet";
 import darkLogo from '../icons/dark-logo.png';
+import {TrackContext} from "./TrackContext";
 
 const genderOptions = [
     { value: 'male', label: 'Male' },
@@ -289,6 +290,20 @@ const BiometricForm = () => {
         const matchedUser = findMatchingUser();
         if (matchedUser) setRandomUser(matchedUser);
     }, [selectedGender, selectedNationality, selectedEthnicity, selectedLanguages, selectedExerciseFrequency, selectedDiet, selectedSleepPatterns, selectedAlcoholConsumption]);
+
+    const { tracks } = useContext(TrackContext);
+    // Function to handle logout
+    const handleLogout = () => {
+        localStorage.removeItem('spotifyAccessToken');
+    };
+
+    // Check if tracks array is empty and redirect if necessary
+    useEffect(() => {
+        if (tracks.length === 0) {
+            handleLogout();
+            navigate('/spotify-login');
+        }
+    }, [tracks, navigate]);
 
     // Main JSX for the form
     return (

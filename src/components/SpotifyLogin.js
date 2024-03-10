@@ -1,16 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import { useNavigate } from 'react-router-dom';
 import lightLogo from '../icons/light-logo.png';
 import darkLogo from '../icons/dark-logo.png';
 import {FaArrowRight, FaSignOutAlt, FaSpotify} from "react-icons/fa";
 import Masonry, {ResponsiveMasonry} from "react-responsive-masonry";
 import {Helmet} from "react-helmet";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import {TrackContext} from "./TrackContext";
 
 const SpotifyLogin = () => {
     const [userDetails, setUserDetails] = useState(null);
     const [savedTracks, setSavedTracks] = useState([]); // State for saved tracks
     const navigate = useNavigate();
     const [currentLogo, setCurrentLogo] = useState(lightLogo);
+
+    // Check if tracks array is empty and redirect if necessary
+    useEffect(() => {
+        if (tracks.length === 0) {
+            handleLogout();
+        }
+    }, [tracks, navigate]);
 
     useEffect(() => {
         const matchDarkMode = window.matchMedia('(prefers-color-scheme: dark)');
@@ -141,6 +152,8 @@ const SpotifyLogin = () => {
     // State for recently played tracks
     const [recentlyPlayedTracks, setRecentlyPlayedTracks] = useState([]);
 
+    const { tracks, setTracks } = useContext(TrackContext);
+
     const fetchRecentlyPlayedTracks = async (token) => {
         try {
             // Fetch recently played tracks
@@ -150,17 +163,36 @@ const SpotifyLogin = () => {
             if (!response.ok) throw new Error('Response not OK');
             const data = await response.json();
 
+            // Extract track IDs for fetching audio features
+            const trackIds = data.items.map(item => item.track.id);
+
+            // Fetch audio features in batches to reduce the number of requests
+            const batchSize = 100; // Spotify API max limit for audio features request
+            const audioFeatures = [];
+            for (let i = 0; i < trackIds.length; i += batchSize) {
+                const batch = trackIds.slice(i, i + batchSize);
+                const featuresResponse = await fetch(`https://api.spotify.com/v1/audio-features?ids=${batch.join(',')}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                if (!featuresResponse.ok) throw new Error('Response not OK');
+                const featuresData = await featuresResponse.json();
+                audioFeatures.push(...featuresData.audio_features);
+            }
+
             // Combine track details with their audio features
-            const tracksWithDetails = data.items.map(item => ({
+            const tracksWithDetails = data.items.map((item, index) => ({
                 name: item.track.name,
                 id: item.track.id,
-                albumImageUrl: item.track.album.images[0]?.url || 'path_to_default_image', // Use the first image or a default one
-                artist: item.track.artists.map(artist => artist.name).join(', ')
-                // Add other details if needed
+                albumImageUrl: item.track.album.images[0]?.url || 'path_to_default_image',
+                artist: item.track.artists.map(artist => artist.name).join(', '),
+                spotifyUrl: item.track.external_urls.spotify, // Spotify URL for the track
+                valence: audioFeatures[index]?.valence // Valence value from the audio features
             }));
 
             console.log('Recently Played Tracks with Details:', tracksWithDetails);
-            return tracksWithDetails; // Return the tracks with details
+            setTracks(tracksWithDetails)
+
+            return tracksWithDetails;
         } catch (error) {
             console.error('Error fetching recently played tracks:', error);
         }
@@ -223,6 +255,40 @@ const SpotifyLogin = () => {
     // Determine the number of items to display based on screen width
     const displayLimit = screenWidth < 768 ? 2 : 3; // Mobile: 3 items, Laptop: 5 items
 
+    const settings = {
+        dots: false,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 4,
+        slidesToScroll: 4,
+        responsive: [
+            {
+                breakpoint: 1024,
+                settings: {
+                    slidesToShow: 3,
+                    slidesToScroll: 3,
+                    infinite: true,
+                    dots: true
+                }
+            },
+            {
+                breakpoint: 600,
+                settings: {
+                    slidesToShow: 2,
+                    slidesToScroll: 2,
+                    initialSlide: 2
+                }
+            },
+            {
+                breakpoint: 480,
+                settings: {
+                    slidesToShow: 1,
+                    slidesToScroll: 1
+                }
+            }
+        ]
+    };
+
     return (
         <div
             // className="bg-gradient-to-r from-green-400 to-blue-500 dark:from-gray-700 dark:to-gray-900 min-h-screen flex items-center justify-center px-4 py-10"
@@ -284,27 +350,6 @@ const SpotifyLogin = () => {
                             </div>
                         </div>
 
-                        <div className="mt-4 w-full">
-                            <div className="overflow-x-auto hide-scrollbar py-4 max-w-full">
-                                <div className="flex space-x-4">
-                                    {recentlyPlayedTracks && recentlyPlayedTracks.length > 0 &&
-                                        recentlyPlayedTracks.map((track, index) => (
-                                            <div key={index} className="flex-none w-24 h-24 relative flex-shrink-0">
-                                                <img
-                                                    src={track.albumImageUrl}
-                                                    alt={track.name}
-                                                    className="w-full h-full object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200"
-                                                    onError={(e) => e.target.src = 'path_to_default_image'}
-                                                />
-                                                <p className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white text-xs p-1 truncate text-center">
-                                                    {track.name}
-                                                </p>
-                                            </div>
-                                        ))}
-                                </div>
-                            </div>
-                        </div>
-
                         <div className="mt-4">
                             <ResponsiveMasonry columnsCountBreakPoints={{350: 2, 750: 2}}>
                                 <Masonry gutter="20px">
@@ -324,15 +369,42 @@ const SpotifyLogin = () => {
                             </ResponsiveMasonry>
                         </div>
 
-                        <div className="mt-4 text-left">
-                        <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">Your Saved
+                        <div className="mt-4 w-full max-w-full px-4 hidden sm:block">
+                            <hr className="border-t-2 border-gray-700 dark:border-gray-300 my-4"/>
+                            <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">Recently Played
                                 Tracks:</h2>
-                            <ul className="list-disc pl-5 text-gray-700 dark:text-gray-300">
-                                {savedTracks.map((track, index) => (
-                                    <li key={index}>{track.name} by {track.artist} ({track.album})</li>
-                                ))}
-                            </ul>
+                            <div className="slider-container" style={{maxWidth: '100%'}}>
+                                <Slider {...settings}>
+                                    {recentlyPlayedTracks.map((track, index) => (
+                                        <div key={index} className="p-2"
+                                             onClick={() => window.open(track.spotifyUrl, "_blank")}>
+                                            <div className="album-cover relative"
+                                                 style={{width: '150px', height: '150px'}}>
+                                                <img
+                                                    src={track.albumImageUrl}
+                                                    alt={track.name}
+                                                    className="w-full h-full object-cover rounded-lg shadow-md"
+                                                    onError={(e) => e.target.src = 'path_to_default_default_image'} // Path to your default image
+                                                />
+                                                <p className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-70 text-white font-bold flex items-center justify-center text-center opacity-0 hover:opacity-100 transition-all duration-300 rounded-lg">
+                                                    {track.name}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </Slider>
+                            </div>
                         </div>
+
+                        {/*<div className="mt-4 text-left">*/}
+                        {/*    <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">Your Saved*/}
+                        {/*        Tracks:</h2>*/}
+                        {/*    <ul className="list-disc pl-5 text-gray-700 dark:text-gray-300">*/}
+                        {/*        {savedTracks.map((track, index) => (*/}
+                        {/*            <li key={index}>{track.name} by {track.artist} ({track.album})</li>*/}
+                        {/*        ))}*/}
+                        {/*    </ul>*/}
+                        {/*</div>*/}
                     </>
                 ) : (
                     <>
