@@ -16,13 +16,6 @@ const SpotifyLogin = () => {
     const navigate = useNavigate();
     const [currentLogo, setCurrentLogo] = useState(lightLogo);
 
-    // Check if tracks array is empty and redirect if necessary
-    useEffect(() => {
-        if (tracks.length === 0) {
-            handleLogout();
-        }
-    }, [tracks, navigate]);
-
     useEffect(() => {
         const matchDarkMode = window.matchMedia('(prefers-color-scheme: dark)');
         const handleThemeChange = (e) => {
