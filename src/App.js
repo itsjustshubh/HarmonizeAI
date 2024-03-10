@@ -32,16 +32,15 @@ function AnimatedRoutes() {
 
 function App() {
     return (
-        <Analytics>
-            <Router>
-                <ErrorBoundary> {/* Wrap your application with ErrorBoundary */}
+        <Router>
+            <ErrorBoundary> {/* Wrap your application with ErrorBoundary */}
                 <div
                     className="bg-gradient-to-r from-green-400 to-blue-500 dark:from-gray-700 dark:to-gray-900 min-h-screen flex items-center justify-center px-4 py-10 p-6">
                     <AnimatedRoutes/>
                 </div>
-                </ErrorBoundary>
-            </Router>
-        </Analytics>
+            </ErrorBoundary>
+            <Analytics />
+        </Router>
     );
 }
 
