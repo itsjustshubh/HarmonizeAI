@@ -363,30 +363,34 @@ const SpotifyLogin = () => {
                         </div>
 
                         <div className="mt-4 w-full max-w-full px-4 hidden sm:block">
-                            <hr className="border-t-2 border-gray-700 dark:border-gray-300 my-4"/>
-                            <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">Recently Played
-                                Tracks:</h2>
-                            <div className="slider-container" style={{maxWidth: '100%'}}>
-                                <Slider {...settings}>
-                                    {recentlyPlayedTracks.map((track, index) => (
-                                        <div key={index} className="p-2"
-                                             onClick={() => window.open(track.spotifyUrl, "_blank")}>
-                                            <div className="album-cover relative"
-                                                 style={{width: '150px', height: '150px'}}>
-                                                <img
-                                                    src={track.albumImageUrl}
-                                                    alt={track.name}
-                                                    className="w-full h-full object-cover rounded-lg shadow-md"
-                                                    onError={(e) => e.target.src = 'path_to_default_default_image'} // Path to your default image
-                                                />
-                                                <p className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-70 text-white font-bold flex items-center justify-center text-center opacity-0 hover:opacity-100 transition-all duration-300 rounded-lg">
-                                                    {track.name}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </Slider>
-                            </div>
+                            {recentlyPlayedTracks && recentlyPlayedTracks.length > 0 && (
+                                <>
+                                    <hr className="border-t-2 border-gray-700 dark:border-gray-300 my-4"/>
+                                    <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">Recently
+                                        Played Tracks:</h2>
+                                    <div className="slider-container" style={{maxWidth: '100%'}}>
+                                        <Slider {...settings}>
+                                            {recentlyPlayedTracks.map((track, index) => (
+                                                <div key={index} className="p-2"
+                                                     onClick={() => window.open(track.spotifyUrl, "_blank")}>
+                                                    <div className="album-cover relative"
+                                                         style={{width: '150px', height: '150px'}}>
+                                                        <img
+                                                            src={track.albumImageUrl}
+                                                            alt={track.name}
+                                                            className="w-full h-full object-cover rounded-lg shadow-md"
+                                                            onError={(e) => e.target.src = 'path_to_default_default_image'}
+                                                        />
+                                                        <p className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-70 text-white font-bold flex items-center justify-center text-center opacity-0 hover:opacity-100 transition-all duration-300 rounded-lg">
+                                                            {track.name}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </Slider>
+                                    </div>
+                                </>
+                            )}
                         </div>
 
                         {/*<div className="mt-4 text-left">*/}
@@ -421,7 +425,7 @@ const SpotifyLogin = () => {
                                     <span
                                         className="text-md font-semibold">Personalized Access to Your Spotify Data:</span>
                                     <ul className="mt-2 pl-6 text-sm">
-                                        <li>Name, Username, and Profile Picture
+                                    <li>Name, Username, and Profile Picture
                                         </li>
                                         <li>Followers and Public Playlists
                                         </li>

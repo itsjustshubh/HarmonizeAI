@@ -297,13 +297,35 @@ const BiometricForm = () => {
         localStorage.removeItem('spotifyAccessToken');
     };
 
+    const [showErrorPopup, setShowErrorPopup] = useState(false);
+
     // Check if tracks array is empty and redirect if necessary
     useEffect(() => {
         if (tracks.length === 0) {
+            setShowErrorPopup(true);
             handleLogout();
-            navigate('/spotify-login');
+            setTimeout(() => {
+                navigate('/spotify-login');
+            }, 3000); // Add a delay before redirecting
         }
-    }, [tracks, navigate]);
+    }, [tracks, navigate, handleLogout]);
+
+    const ErrorPopup = ({ onClose }) => (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded shadow-lg p-6 max-w-sm w-full">
+                <h2 className="text-xl font-bold mb-2">No Recently Played Tracks</h2>
+                <p>You don't have any recently played tracks.</p>
+                <div className="mt-4 flex justify-end">
+                    {/*<button*/}
+                    {/*    onClick={onClose}*/}
+                    {/*    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"*/}
+                    {/*>*/}
+                    {/*    Close*/}
+                    {/*</button>*/}
+                </div>
+            </div>
+        </div>
+    );
 
     // Main JSX for the form
     return (
@@ -617,6 +639,7 @@ const BiometricForm = () => {
                     </div>
                 </form>
             </div>
+            {showErrorPopup && <ErrorPopup onClose={() => setShowErrorPopup(false)} />}
         </div>
     );
 };
