@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import lightLogo from '../icons/light-logo.png';
 import darkLogo from '../icons/dark-logo.png';
 import { FaHeadphonesAlt } from 'react-icons/fa';
-import {Helmet} from "react-helmet"; // Importing icon for aesthetics
+import { Helmet } from 'react-helmet';
+import { motion } from 'framer-motion';
 
 const IntroSplashScreen = () => {
     const navigate = useNavigate();
@@ -20,17 +21,31 @@ const IntroSplashScreen = () => {
         handleThemeChange(matchDarkMode);
         matchDarkMode.addEventListener('change', handleThemeChange);
 
-        const timer = setTimeout(() => navigate('/intro'), 3000); // Total display time including fade-out
-
         return () => {
-            clearTimeout(timer);
             matchDarkMode.removeEventListener('change', handleThemeChange);
         };
-    }, [navigate]);
+    }, []);
+
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                delay: 2,
+                duration: 1
+            }
+        }
+    };
+
+    const buttonVariants = {
+        hover: { scale: 1.1 },
+        tap: { scale: 0.95 }
+    };
 
     return (
         <div
-            className="bg-gradient-to-r from-green-400 to-blue-500 dark:from-gray-700 dark:to-gray-900 min-h-screen flex items-center justify-center px-4 py-10">
+            // className="bg-gradient-to-r from-green-400 to-blue-500 dark:from-gray-700 dark:to-gray-900 min-h-screen flex items-center justify-center px-4 py-10"
+        >
             <Helmet>
                 <title>HarmonizeAI: Personalized Music Experience</title>
                 <meta name="description" content="Experience a unique music journey with HarmonizeAI. Connect with Spotify, input your mood, and enjoy a customized playlist that resonates with your emotions." />
@@ -43,13 +58,28 @@ const IntroSplashScreen = () => {
             </Helmet>
             <div className="text-center">
                 <img src={currentLogo} alt="Logo" className="mx-auto h-48 animate-pulse"/>
-                <h1 className={`text-5xl font-bold my-4 transition-colors duration-500 ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>
+                <h1 className={`text-5xl font-bold my-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>
                     Welcome to Harmonize AI
                 </h1>
-                <p className={`text-xl transition-colors duration-500 ${isDarkMode ? 'text-gray-200' : 'text-gray-600'}`}>
+                <p className={`text-xl ${isDarkMode ? 'text-gray-200' : 'text-gray-600'}`}>
                     Discover music that matches your mood.
                 </p>
-                <FaHeadphonesAlt className="mx-auto text-6xl my-4 text-indigo-500 animate-pulse"/>
+                <motion.div
+                    className="flex justify-center items-center mt-4"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                >
+                    <motion.button
+                        onClick={() => navigate('/intro')}
+                        className="py-2 px-6 bg-indigo-600 text-white font-bold rounded-lg shadow-md hover:bg-indigo-700"
+                        variants={buttonVariants}
+                        whileHover="hover"
+                        whileTap="tap"
+                    >
+                        Welcome
+                    </motion.button>
+                </motion.div>
             </div>
         </div>
     );

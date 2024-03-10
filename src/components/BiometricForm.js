@@ -292,7 +292,9 @@ const BiometricForm = () => {
 
     // Main JSX for the form
     return (
-        <div className="bg-gradient-to-r from-green-400 to-blue-500 dark:from-gray-700 dark:to-gray-900 min-h-screen flex items-center justify-center">
+        <div
+            // className="bg-gradient-to-r from-green-400 to-blue-500 dark:from-gray-700 dark:to-gray-900 min-h-screen flex items-center justify-center"
+        >
             <Helmet>
                 <title>HarmonizeAI: Submit Your Biometric Data | HarmonizeAI</title>
                 <meta name="description" content="Provide your biometric details to enhance your music experience with HarmonizeAI. Get playlists that fit your physical and emotional state." />

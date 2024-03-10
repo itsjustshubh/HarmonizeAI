@@ -12,7 +12,9 @@ const IntroPage = () => {
     };
 
     return (
-        <div className="bg-gradient-to-r from-green-400 to-blue-500 dark:from-gray-700 dark:to-gray-900 min-h-screen flex items-center justify-center px-4 py-10">
+        <div
+            // className="bg-gradient-to-r from-green-400 to-blue-500 dark:from-gray-700 dark:to-gray-900 min-h-screen flex items-center justify-center px-4 py-10"
+        >
             <Helmet>
                 <title>HarmonizeAI: Personalized Music Experience</title>
                 <meta name="description" content="Experience a unique music journey with HarmonizeAI. Connect with Spotify, input your mood, and enjoy a customized playlist that resonates with your emotions." />

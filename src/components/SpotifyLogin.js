@@ -157,7 +157,9 @@ const SpotifyLogin = () => {
     };
 
     return (
-        <div className="bg-gradient-to-r from-green-400 to-blue-500 dark:from-gray-700 dark:to-gray-900 min-h-screen flex items-center justify-center px-4 py-10">
+        <div
+            // className="bg-gradient-to-r from-green-400 to-blue-500 dark:from-gray-700 dark:to-gray-900 min-h-screen flex items-center justify-center px-4 py-10"
+        >
             <Helmet>
                 <title>HarmonizeAI: Spotify Music Personalization</title>
                 <meta name="description" content="HarmonizeAI creates a unique Spotify listening experience by adapting playlists to your mood and preferences. Log in with Spotify and discover music that echoes your emotions." />
