@@ -46,6 +46,13 @@ const SpotifyLogin = () => {
             fetchUserDetails(accessToken);
             fetchSavedTracks(accessToken);
         }
+
+        // Fetch recently played tracks
+        if (accessToken) {
+            fetchRecentlyPlayedTracks(accessToken).then(tracks => {
+                setRecentlyPlayedTracks(tracks);
+            });
+        }
     }, [navigate]);
 
     // Fetch User Details
@@ -131,46 +138,29 @@ const SpotifyLogin = () => {
         }
     };
 
-    const fetchAudioFeaturesForTrack = async (token, trackId) => {
-        try {
-            const response = await fetch(`https://api.spotify.com/v1/audio-features/${trackId}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            if (!response.ok) throw new Error('Response not OK');
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            console.error('Error fetching audio features:', error);
-            return null;
-        }
-    };
+    // State for recently played tracks
+    const [recentlyPlayedTracks, setRecentlyPlayedTracks] = useState([]);
 
     const fetchRecentlyPlayedTracks = async (token) => {
         try {
-            const response = await fetch('https://api.spotify.com/v1/me/player/recently-played', {
+            // Fetch recently played tracks
+            const response = await fetch('https://api.spotify.com/v1/me/player/recently-played?limit=50', {
                 headers: { Authorization: `Bearer ${token}` },
             });
             if (!response.ok) throw new Error('Response not OK');
             const data = await response.json();
 
-            const tracksWithFeatures = [];
+            // Combine track details with their audio features
+            const tracksWithDetails = data.items.map(item => ({
+                name: item.track.name,
+                id: item.track.id,
+                albumImageUrl: item.track.album.images[0]?.url || 'path_to_default_image', // Use the first image or a default one
+                artist: item.track.artists.map(artist => artist.name).join(', ')
+                // Add other details if needed
+            }));
 
-            for (const item of data.items) {
-                const track = item.track;
-                const audioFeatures = await fetchAudioFeaturesForTrack(token, track.id);
-                if (audioFeatures) {
-                    tracksWithFeatures.push({
-                        name: track.name,
-                        id: track.id,
-                        valence: audioFeatures.valence // Store the valence value
-                    });
-                }
-            }
-
-            // Sort tracks by valence in ascending order
-            tracksWithFeatures.sort((a, b) => a.valence - b.valence);
-
-            console.log('Sorted Tracks by Valence:', tracksWithFeatures);
+            console.log('Recently Played Tracks with Details:', tracksWithDetails);
+            return tracksWithDetails; // Return the tracks with details
         } catch (error) {
             console.error('Error fetching recently played tracks:', error);
         }
@@ -294,18 +284,39 @@ const SpotifyLogin = () => {
                             </div>
                         </div>
 
+                        <div className="mt-4 w-full">
+                            <div className="overflow-x-auto hide-scrollbar py-4 max-w-full">
+                                <div className="flex space-x-4">
+                                    {recentlyPlayedTracks && recentlyPlayedTracks.length > 0 &&
+                                        recentlyPlayedTracks.map((track, index) => (
+                                            <div key={index} className="flex-none w-24 h-24 relative flex-shrink-0">
+                                                <img
+                                                    src={track.albumImageUrl}
+                                                    alt={track.name}
+                                                    className="w-full h-full object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200"
+                                                    onError={(e) => e.target.src = 'path_to_default_image'}
+                                                />
+                                                <p className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white text-xs p-1 truncate text-center">
+                                                    {track.name}
+                                                </p>
+                                            </div>
+                                        ))}
+                                </div>
+                            </div>
+                        </div>
+
                         <div className="mt-4">
-                            <ResponsiveMasonry columnsCountBreakPoints={{350: 1, 750: 2}}>
+                            <ResponsiveMasonry columnsCountBreakPoints={{350: 2, 750: 2}}>
                                 <Masonry gutter="20px">
                                     <button onClick={handleLogout}
-                                            className="flex items-center justify-center w-full px-4 py-2 border border-transparent text-base rounded-2xl text-white bg-red-600 hover:bg-red-700 transition-transform duration-200 hover:scale-105
+                                            className="flex items-center justify-center w-half px-4 py-2 border border-transparent text-base rounded-2xl text-white bg-red-600 hover:bg-red-700 transition-transform duration-200 hover:scale-105
                                         animate-none hover:animate-pulse
                                         font-bold">
                                         Logout <FaSignOutAlt className="ml-2"/>
                                     </button>
 
                                     <button onClick={handleContinue}
-                                            className="flex items-center justify-center w-full mb-4 px-4 py-2 border border-transparent text-base rounded-2xl text-white bg-green-600 hover:bg-green-700 transition-transform duration-200 hover:scale-105
+                                            className="flex items-center justify-center w-half mb-4 px-4 py-2 border border-transparent text-base rounded-2xl text-white bg-green-600 hover:bg-green-700 transition-transform duration-200 hover:scale-105
                                         animate-none hover:animate-pulse font-bold">
                                         Continue <FaArrowRight className="ml-2"/>
                                     </button>
@@ -314,7 +325,7 @@ const SpotifyLogin = () => {
                         </div>
 
                         <div className="mt-4 text-left">
-                            <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">Your Saved
+                        <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">Your Saved
                                 Tracks:</h2>
                             <ul className="list-disc pl-5 text-gray-700 dark:text-gray-300">
                                 {savedTracks.map((track, index) => (

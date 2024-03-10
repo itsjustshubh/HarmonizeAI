@@ -76,3 +76,13 @@
   from, to { border-color: transparent }
   50% { border-color: black; } /* Change to match the color of your text */
 }
+
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  overflow-x: auto;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
+}
