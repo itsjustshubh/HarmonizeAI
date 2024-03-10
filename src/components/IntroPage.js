@@ -1,11 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import darkLogo from '../icons/dark-logo.png';
-import { FaArrowRight, FaPlay, FaSpotify } from 'react-icons/fa';
+import customLightLogo from '../icons/light-logo.png';
+import customDarkLogo from '../icons/dark-logo.png';
+import { FaPlay } from 'react-icons/fa';
 
 const IntroPage = () => {
     const navigate = useNavigate();
+    const [isDarkMode, setIsDarkMode] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches);
+    const [currentLogo, setCurrentLogo] = useState(isDarkMode ? customDarkLogo : customLightLogo);
+
+    useEffect(() => {
+        const matchDarkMode = window.matchMedia('(prefers-color-scheme: dark)');
+        const handleThemeChange = (e) => {
+            setIsDarkMode(e.matches);
+            setCurrentLogo(e.matches ? customDarkLogo : customLightLogo);
+        };
+
+        handleThemeChange(matchDarkMode);
+        matchDarkMode.addEventListener('change', handleThemeChange);
+
+        return () => {
+            matchDarkMode.removeEventListener('change', handleThemeChange);
+        };
+    }, []);
 
     const navigateToNext = () => {
         navigate('/spotify-login');
@@ -23,15 +41,26 @@ const IntroPage = () => {
                 <meta property="og:description" content="Connect with Spotify and discover playlists that match your mood with HarmonizeAI." />
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content={window.location.href} />
-                <meta property="og:image" content={darkLogo} /> {/* Add the path to a representative image */}
+                <meta property="og:image" content={customDarkLogo} /> {/* Add the path to a representative image */}
             </Helmet>
-            <div className="max-w-2xl w-full mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 space-y-6 text-center">
-                <FaSpotify className="mx-auto text-6xl text-green-600 dark:text-white" />
+            <div
+                className="max-w-2xl w-full mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 space-y-6 text-center">
+                <img
+                    src={currentLogo}
+                    alt="Custom Logo"
+                    style={{
+                        height: 'calc(5vh + 5vw)',
+                        width: 'auto',
+                        display: 'block',
+                        marginLeft: 'auto',
+                        marginRight: 'auto'
+                    }}
+                />
                 <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100">
                     Explore Music with Your Emotions
                 </h1>
                 <p className="mt-2 text-lg text-gray-600 dark:text-gray-300">
-                    Harmonize your mood with personalized Spotify playlists.
+                Harmonize your mood with personalized Spotify playlists.
                 </p>
                 <ol className="list-decimal pl-6 text-lg text-gray-700 dark:text-gray-300 space-y-2 mt-4 text-left">
                     <li>Connect with your Spotify account.</li>
@@ -44,10 +73,11 @@ const IntroPage = () => {
                     className="mt-6 w-full flex justify-center items-center px-6 py-3 border border-transparent text-lg font-bold rounded-2xl text-white bg-indigo-600 hover:bg-indigo-700 transition duration-150 ease-in-out hover:scale-105 animate-pulse hover:animate-none"
                 >
                     Get Started
-                    <FaPlay className="ml-2" />
+                    <FaPlay className="ml-2"/>
                 </button>
                 <p className="text-sm text-gray-500 mt-4">
-                    We respect your privacy. Your Spotify data is used only for enhancing your music experience and is not saved anywhere only in terms of cookies.
+                    We respect your privacy. Your Spotify data is used only for enhancing your music experience and is
+                    not saved anywhere only in terms of cookies.
                 </p>
             </div>
         </div>

@@ -306,7 +306,7 @@ const BiometricForm = () => {
                 <meta property="og:image" content={darkLogo} /> {/* Update with an appropriate image path */}
             </Helmet>
 
-            <div className="w-full max-w-2xl mx-4 sm:mx-6 md:mx-8 lg:mx-10 xl:mx-12 my-10 bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 space-y-6">
+            <div className="max-w-2xl w-full mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 space-y-6 text-center">
                 <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100">
                     Biometric Data Submission
                 </h1>

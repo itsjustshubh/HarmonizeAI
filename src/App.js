@@ -31,8 +31,9 @@ function AnimatedRoutes() {
 function App() {
     return (
         <Router>
-            <div className="bg-gradient-to-r from-green-400 to-blue-500 dark:from-gray-700 dark:to-gray-900 min-h-screen flex items-center justify-center px-4 py-10">
-                <AnimatedRoutes />
+            <div
+                className="bg-gradient-to-r from-green-400 to-blue-500 dark:from-gray-700 dark:to-gray-900 min-h-screen flex items-center justify-center px-4 py-10 p-6">
+                <AnimatedRoutes/>
             </div>
         </Router>
     );
