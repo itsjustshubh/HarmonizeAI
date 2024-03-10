@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { PageTransitionWrapper } from './PageTransitionWrapper'; // Ensure correct path
+import { Analytics } from "@vercel/analytics/react"
 
 // Import your page components
 import IntroSplashScreen from './components/IntroSplashScreen';
@@ -10,6 +11,7 @@ import SpotifyLogin from './components/SpotifyLogin';
 import BiometricForm from './components/BiometricForm';
 import PlaylistDisplay from './components/PlaylistDisplay';
 import OutroPage from './components/OutroPage';
+import ErrorBoundary from "./components/ErrorBoundary";
 
 function AnimatedRoutes() {
     const location = useLocation();
@@ -30,12 +32,16 @@ function AnimatedRoutes() {
 
 function App() {
     return (
-        <Router>
-            <div
-                className="bg-gradient-to-r from-green-400 to-blue-500 dark:from-gray-700 dark:to-gray-900 min-h-screen flex items-center justify-center px-4 py-10 p-6">
-                <AnimatedRoutes/>
-            </div>
-        </Router>
+        <Analytics>
+            <Router>
+                <ErrorBoundary> {/* Wrap your application with ErrorBoundary */}
+                <div
+                    className="bg-gradient-to-r from-green-400 to-blue-500 dark:from-gray-700 dark:to-gray-900 min-h-screen flex items-center justify-center px-4 py-10 p-6">
+                    <AnimatedRoutes/>
+                </div>
+                </ErrorBoundary>
+            </Router>
+        </Analytics>
     );
 }
 

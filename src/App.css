@@ -46,3 +46,13 @@
   animation: slideUp 0.7s ease-in-out forwards;
 }
 
+.error-popup {
+  position: fixed;
+  top: 10%;
+  left: 10%;
+  width: 80%;
+  background: white;
+  border: 1px solid #ff4444;
+  padding: 20px;
+  z-index: 1000;
+}
