@@ -13,6 +13,7 @@ import PlaylistDisplay from './components/PlaylistDisplay';
 import OutroPage from './components/OutroPage';
 import ErrorBoundary from "./components/ErrorBoundary";
 import LoadingPlaylist from "./components/LoadingPlaylist";
+import NotFoundPage from "./components/NotFoundPage";
 
 function AnimatedRoutes() {
     const location = useLocation();
@@ -27,6 +28,7 @@ function AnimatedRoutes() {
                 <Route path="/loading-playlist" element={<PageTransitionWrapper><LoadingPlaylist /></PageTransitionWrapper>} />
                 <Route path="/playlist" element={<PageTransitionWrapper><PlaylistDisplay /></PageTransitionWrapper>} />
                 <Route path="/outro" element={<PageTransitionWrapper><OutroPage /></PageTransitionWrapper>} />
+                <Route path="*" element={<PageTransitionWrapper><NotFoundPage /></PageTransitionWrapper>} />
             </Routes>
         </AnimatePresence>
     );
