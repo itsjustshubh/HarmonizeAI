@@ -27,11 +27,11 @@ const LoadingPlaylist = () => {
         return () => sio.disconnect();
     }, []);
 
+    const latestMessage = messages[messages.length - 1];
+
     const handleLogout = () => {
         localStorage.removeItem('spotifyAccessToken');
     };
-
-    const latestMessage = messages[messages.length - 1];
 
     const renderDetails = (details) => {
         return Object.entries(details).map(([key, value], index) => (
