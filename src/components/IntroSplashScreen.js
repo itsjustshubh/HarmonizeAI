@@ -37,26 +37,14 @@ const IntroSplashScreen = () => {
         <div className="text-center">
             <Helmet>
                 <title>HarmonizeAI: Personalized Music Experience</title>
-                <meta name="description"
-                      content="Experience a unique music journey with HarmonizeAI. Connect with Spotify, input your mood, and enjoy a customized playlist that resonates with your emotions."/>
-                <meta name="keywords"
-                      content="HarmonizeAI, Spotify, music, playlist, mood, emotions, personalization, music experience"/>
-                <meta property="og:title" content="HarmonizeAI: Personalized Music Experience"/>
-                <meta property="og:description"
-                      content="Connect with Spotify and discover playlists that match your mood with HarmonizeAI."/>
-                <meta property="og:type" content="website"/>
-                <meta property="og:url" content={window.location.href}/>
-                <meta property="og:image" content={darkLogo}/>
-                {/* Add the path to a representative image */}
+                <meta name="description" content="Experience a unique music journey with HarmonizeAI. Connect with Spotify, input your mood, and enjoy a customized playlist that resonates with your emotions." />
+                <meta name="keywords" content="HarmonizeAI, Spotify, music, playlist, mood, emotions, personalization, music experience" />
+                <meta property="og:title" content="HarmonizeAI: Personalized Music Experience" />
+                <meta property="og:description" content="Connect with Spotify and discover playlists that match your mood with HarmonizeAI." />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content={window.location.href} />
+                <meta property="og:image" content={darkLogo} /> {/* Add the path to a representative image */}
             </Helmet>
-
-            {/*<div className="flex flex-col items-center justify-center mx-auto h-48 animate-pulse">*/}
-            {/*    <img*/}
-            {/*        src={currentLogo}*/}
-            {/*        alt="Logo"*/}
-            {/*        className="h-48 w-auto rounded-full shadow-lg"*/}
-            {/*    />*/}
-            {/*</div>*/}
 
             <img src={currentLogo} alt="Logo" className="mx-auto h-48 animate-pulse"/>
             <h1 className={`text-5xl font-bold my-4 dark:text-gray-100 text-gray-800'}`}>

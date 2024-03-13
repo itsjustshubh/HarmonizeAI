@@ -1,7 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { FaHome } from 'react-icons/fa'; // Importing home icon for navigation
+import { FaHome } from 'react-icons/fa';
+import ThemeSwitch from "./ThemeSwitch"; // Importing home icon for navigation
 
 const OutroPage = () => {
     const navigate = useNavigate();
@@ -18,8 +19,10 @@ const OutroPage = () => {
                 <title>Thank You - HarmonizeAI</title>
                 <meta name="description" content="Thank you for experiencing your music journey with HarmonizeAI." />
             </Helmet>
-            <div className="max-w-2xl w-full mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 space-y-6 text-center">
-                <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100">
+            <div className="max-w-2xl w-full mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 space-y-8 text-center">
+                <ThemeSwitch/>
+
+                <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
                     Thank You for Using HarmonizeAI!
                 </h1>
                 <p className="mt-2 text-lg text-gray-600 dark:text-gray-300">

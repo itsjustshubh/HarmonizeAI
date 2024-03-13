@@ -12,6 +12,7 @@ import {TrackContext} from "./TrackContext";
 import {useTheme} from "./ThemeContext";
 import customDarkLogo from "../icons/dark-logo.png";
 import customLightLogo from "../icons/light-logo.png";
+import ThemeSwitch from "./ThemeSwitch";
 
 const SpotifyLogin = () => {
     const { darkTheme } = useTheme();
@@ -300,6 +301,8 @@ const SpotifyLogin = () => {
                 <meta property="og:url" content={window.location.href} />
                 <meta property="og:image" content={darkLogo} /> {/* Use the dynamic currentLogo for the image */}
             </Helmet>
+
+            <ThemeSwitch/>
 
             <div className="max-w-3xl w-full mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-8 space-y-6 text-center">
                 {userDetails ? (

@@ -2,8 +2,8 @@
 /* ThemeSwitch.css */
 .theme-switch-wrapper {
     position: fixed; /* Or absolute, depending on your layout needs */
-    top: 5vh; /* Adjust these values to place the switch where you want */
-    right: 5vh;
+    top: 1vh; /* Adjust these values to place the switch where you want */
+    right: 1vh;
     z-index: 1000; /* Ensure it's above other elements */
 }
 

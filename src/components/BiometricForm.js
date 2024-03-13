@@ -10,6 +10,7 @@ import {TrackContext} from "./TrackContext";
 import {useTheme} from "./ThemeContext";
 import customDarkLogo from "../icons/dark-logo.png";
 import customLightLogo from "../icons/light-logo.png";
+import ThemeSwitch from "./ThemeSwitch";
 
 const genderOptions = [
     { value: 'male', label: 'Male' },
@@ -391,9 +392,11 @@ const BiometricForm = () => {
                 <meta property="og:image" content={darkLogo} /> {/* Update with an appropriate image path */}
             </Helmet>
 
+            <ThemeSwitch/>
+
             <div
                 className="max-w-6xl w-full mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 space-y-6">
-                <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100">
+                <h1 className="mt-8 text-3xl font-bold text-center text-gray-800 dark:text-gray-100">
                     Biometric Data Submission
                 </h1>
                 <p className="text-lg text-gray-600 dark:text-gray-300 text-center mb-4">

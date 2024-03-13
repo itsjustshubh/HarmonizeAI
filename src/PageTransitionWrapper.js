@@ -1,4 +1,6 @@
 import { motion } from 'framer-motion';
+import ThemeSwitch from "./components/ThemeSwitch";
+import React from "react";
 
 const pageVariants = {
     initial: {

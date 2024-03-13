@@ -5,6 +5,7 @@ import customLightLogo from '../icons/light-logo.png';
 import customDarkLogo from '../icons/dark-logo.png';
 import { FaPlay } from 'react-icons/fa';
 import { useTheme } from "./ThemeContext";
+import ThemeSwitch from "./ThemeSwitch";
 
 const IntroPage = () => {
     const navigate = useNavigate();
@@ -21,7 +22,9 @@ const IntroPage = () => {
 
     return (
         <div
-            className="max-w-2xl w-full mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 space-y-6 text-center">
+            className="max-w-2xl w-full mx-auto bg-white dark:bg-gray-800 rounded-xl p-8 space-y-6 text-center
+            {/*shadow-[0px_0px_69px_0px_rgba(255,_255,_255,_0.35)]*/}
+            m-3">
             <Helmet>
                 <title>HarmonizeAI: Personalized Music Experience</title>
                 <meta name="description" content="Experience a unique music journey with HarmonizeAI. Connect with Spotify, input your mood, and enjoy a customized playlist that resonates with your emotions." />
@@ -32,6 +35,7 @@ const IntroPage = () => {
                 <meta property="og:url" content={window.location.href} />
                 <meta property="og:image" content={customDarkLogo} /> {/* Add the path to a representative image */}
             </Helmet>
+            <ThemeSwitch/>
             <img
                 src={currentLogo}
                 alt="Custom Logo"

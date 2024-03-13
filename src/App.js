@@ -57,10 +57,16 @@ function App() {
         <Router>
             <ThemeProvider>
                 <ErrorBoundary>
-                    <ThemeSwitch />
+                    {/*<div*/}
+                    {/*    className="bg-gradient-to-r from-green-400 to-blue-500 dark:from-gray-700 dark:to-gray-900 min-h-screen flex items-center justify-center px-5 py-5 p-6">*/}
+                    {/*    <AnimatedRoutes/>*/}
+                    {/*</div>*/}
 
                     <div
-                        className="bg-gradient-to-r from-green-400 to-blue-500 dark:from-gray-700 dark:to-gray-900 min-h-screen flex items-center justify-center px-5 py-5 p-6">
+                        className="
+                        dark:bg-[conic-gradient(at_bottom_right,_var(--tw-gradient-stops))] dark:from-blue-700 dark:via-blue-800 dark:to-gray-900
+                        bg-gradient-to-r from-green-400 via-teal-500 to-cyan-600
+                        min-h-screen flex items-center justify-center px-5 py-5 p-6">
                         <AnimatedRoutes/>
                     </div>
 

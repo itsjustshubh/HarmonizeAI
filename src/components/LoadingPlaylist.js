@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import socketio from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
-import { TrackContext } from "./TrackContext"; // Adjust path as needed
+import { TrackContext } from "./TrackContext";
+import ThemeSwitch from "./ThemeSwitch"; // Adjust path as needed
 
 const LoadingPlaylist = () => {
     const [messages, setMessages] = useState([]);
@@ -126,20 +127,23 @@ const LoadingPlaylist = () => {
 
     return (
         <div>
+            <ThemeSwitch/>
+
             {showErrorPopup ? (
                     <div className="message-box bg-gray-800 dark:bg-white p-6 rounded-3xl shadow-lg max-w-lg w-full">
                         <ErrorPopup/>
                     </div>
                 ) :
                 <div className="message-box bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-lg max-w-lg w-full">
+                    <ThemeSwitch/>
                     {latestMessage ? (
-                            <div className="animate-fade-in-down">
+                            <div className="mt-10 animate-fade-in-down">
                                 <p className="text-2xl text-gray-700 dark:text-gray-300 font-semibold">{latestMessage.stage}</p>
                                 {latestMessage.details &&
                                     <div className="space-y-2 mt-3 text-gray-700 dark:text-gray-300">{renderDetails(latestMessage.details)}</div>}
                             </div>
                         ) :
-                        <div className="animate-fade-in-down">
+                        <div className="mt-10 animate-fade-in-down">
                             <p className="text-2xl text-gray-700 dark:text-gray-300 font-semibold">Waiting To Send Response</p>
                             <div className="space-y-2 mt-3 text-gray-700 dark:text-gray-300">The response has not been sent or received yet. I would suggest reloading the login page.</div>
                         </div>
