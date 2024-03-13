@@ -9,22 +9,23 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import {TrackContext} from "./TrackContext";
+import {useTheme} from "./ThemeContext";
+import customDarkLogo from "../icons/dark-logo.png";
+import customLightLogo from "../icons/light-logo.png";
 
 const SpotifyLogin = () => {
+    const { darkTheme } = useTheme();
+    const [currentLogo, setCurrentLogo] = useState(darkTheme ? customDarkLogo : customLightLogo);
+
+    useEffect(() => {
+        setCurrentLogo(darkTheme ? customDarkLogo : customLightLogo);
+    }, [darkTheme]);
+
     const [userDetails, setUserDetails] = useState(null);
     const [savedTracks, setSavedTracks] = useState([]); // State for saved tracks
     const navigate = useNavigate();
-    const [currentLogo, setCurrentLogo] = useState(lightLogo);
 
     useEffect(() => {
-        const matchDarkMode = window.matchMedia('(prefers-color-scheme: dark)');
-        const handleThemeChange = (e) => {
-            setCurrentLogo(e.matches ? darkLogo : lightLogo);
-        };
-
-        handleThemeChange(matchDarkMode);
-        matchDarkMode.addEventListener('change', handleThemeChange);
-
         const getTokenFromHash = () => {
             const hash = window.location.hash
                 .substring(1)
@@ -252,7 +253,7 @@ const SpotifyLogin = () => {
     const displayLimit = screenWidth < 768 ? 2 : 3; // Mobile: 3 items, Laptop: 5 items
 
     const settings = {
-        dots: false,
+        dots: true,
         infinite: true,
         speed: 500,
         slidesToShow: 4,

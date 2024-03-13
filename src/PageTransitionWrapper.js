@@ -1,5 +1,3 @@
-// PageTransitionWrapper.js
-
 import { motion } from 'framer-motion';
 
 const pageVariants = {
@@ -25,14 +23,16 @@ const pageTransition = {
 
 export const PageTransitionWrapper = ({ children }) => {
     return (
-        <motion.div
-            initial="initial"
-            animate="in"
-            exit="out"
-            variants={pageVariants}
-            transition={pageTransition}
-        >
-            {children}
-        </motion.div>
+        <div>
+            <motion.div
+                initial="initial"
+                animate="in"
+                exit="out"
+                variants={pageVariants}
+                transition={pageTransition}
+            >
+                {children}
+            </motion.div>
+        </div>
     );
 };

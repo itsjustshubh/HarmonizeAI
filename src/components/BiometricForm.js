@@ -7,6 +7,9 @@ import {FaCheckCircle} from "react-icons/fa";
 import {Helmet} from "react-helmet";
 import darkLogo from '../icons/dark-logo.png';
 import {TrackContext} from "./TrackContext";
+import {useTheme} from "./ThemeContext";
+import customDarkLogo from "../icons/dark-logo.png";
+import customLightLogo from "../icons/light-logo.png";
 
 const genderOptions = [
     { value: 'male', label: 'Male' },
@@ -84,66 +87,71 @@ const alcoholConsumptionOptions = [
     { value: 'high', label: 'High' },
 ];
 
-const getCustomStyles = (isDarkMode) => ({
+const getCustomStyles = (darkTheme) => ({
     control: (provided) => ({
         ...provided,
-        backgroundColor: isDarkMode ? 'rgb(33, 37, 41)' : 'white',
-        borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)',
-        color: isDarkMode ? 'white' : 'black',
-        boxShadow: isDarkMode ? '0 0 0 1px rgba(255, 255, 255, 0.2)' : '0 0 0 1px rgba(0, 0, 0, 0.1)',
+        backgroundColor: darkTheme ? 'rgb(33, 37, 41)' : 'white',
+        borderColor: darkTheme ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)',
+        color: darkTheme ? 'white' : 'black',
+        boxShadow: darkTheme ? '0 0 0 1px rgba(255, 255, 255, 0.2)' : '0 0 0 1px rgba(0, 0, 0, 0.1)',
         '&:hover': {
-            borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)',
+            borderColor: darkTheme ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)',
         },
         width: '100%', // Sets the width of the Select to fit its container
     }),
     input: (styles) => ({
         ...styles,
-        color: isDarkMode ? 'white' : 'black',
+        color: darkTheme ? 'white' : 'black',
     }),
     singleValue: (provided) => ({
         ...provided,
-        color: isDarkMode ? 'white' : 'black',
+        color: darkTheme ? 'white' : 'black',
     }),
     menu: (provided) => ({
         ...provided,
-        backgroundColor: isDarkMode ? 'rgb(33, 37, 41)' : 'white',
-        color: isDarkMode ? 'white' : 'black',
+        backgroundColor: darkTheme ? 'rgb(33, 37, 41)' : 'white',
+        color: darkTheme ? 'white' : 'black',
     }),
     menuList: (provided) => ({
         ...provided,
         maxHeight: '15vh',
-        backgroundColor: isDarkMode ? 'rgb(33, 37, 41)' : 'white',
+        backgroundColor: darkTheme ? 'rgb(33, 37, 41)' : 'white',
     }),
     option: (provided, state) => ({
         ...provided,
         backgroundColor: state.isFocused
-            ? isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)'
-            : isDarkMode ? 'rgb(33, 37, 41)' : 'white',
-        color: isDarkMode ? 'white' : 'black',
+            ? darkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)'
+            : darkTheme ? 'rgb(33, 37, 41)' : 'white',
+        color: darkTheme ? 'white' : 'black',
         '&:active': {
-            backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)',
+            backgroundColor: darkTheme ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)',
         },
     }),
     multiValue: (styles) => ({
         ...styles,
-        backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+        backgroundColor: darkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
     }),
     multiValueLabel: (styles) => ({
         ...styles,
-        color: isDarkMode ? 'white' : 'black',
+        color: darkTheme ? 'white' : 'black',
     }),
     multiValueRemove: (styles) => ({
         ...styles,
-        color: isDarkMode ? 'white' : 'black',
+        color: darkTheme ? 'white' : 'black',
         '&:hover': {
-            backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)',
+            backgroundColor: darkTheme ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)',
             color: 'white',
         },
     }),
 });
 
 const BiometricForm = () => {
-    const [isDarkMode, setIsDarkMode] = useState(false);
+    const { darkTheme, setDarkTheme } = useTheme();
+    const [currentLogo, setCurrentLogo] = useState(darkTheme ? customDarkLogo : customLightLogo);
+
+    useEffect(() => {
+        setCurrentLogo(darkTheme ? customDarkLogo : customLightLogo);
+    }, [darkTheme]);
 
     // name details
     const [firstName, setFirstName] = useState(null);
@@ -189,8 +197,8 @@ const BiometricForm = () => {
     // Detect dark mode setting
     useEffect(() => {
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        setIsDarkMode(mediaQuery.matches);
-        const handleThemeChange = (e) => setIsDarkMode(e.matches);
+        setDarkTheme(mediaQuery.matches);
+        const handleThemeChange = (e) => setDarkTheme(e.matches);
         mediaQuery.addEventListener('change', handleThemeChange);
         return () => mediaQuery.removeEventListener('change', handleThemeChange);
     }, []);
@@ -415,7 +423,7 @@ const BiometricForm = () => {
                         </div>
                     </div>
 
-                    <ResponsiveMasonry columnsCountBreakPoints={{350: 2, 750: 2, 900: 3}}>
+                    <ResponsiveMasonry columnsCountBreakPoints={{350: 2, 750: 2, 900: 2}}>
                         <Masonry gutter="20px">
                             {/* Gender */}
                             <div className="mb-4">
@@ -428,7 +436,7 @@ const BiometricForm = () => {
                                     options={genderOptions}
                                     onChange={handleGenderChange}
                                     value={selectedGender}
-                                    styles={getCustomStyles(isDarkMode)}
+                                    styles={getCustomStyles(darkTheme)}
                                     placeholder="Select your gender"
                                 />
                             </div>
@@ -444,7 +452,7 @@ const BiometricForm = () => {
                                     options={nationalityOptions}
                                     onChange={handleNationalityChange}
                                     value={selectedNationality}
-                                    styles={getCustomStyles(isDarkMode)}
+                                    styles={getCustomStyles(darkTheme)}
                                     placeholder="Select your nationality"
                                 />
                             </div>
@@ -460,7 +468,7 @@ const BiometricForm = () => {
                                     options={ethnicityOptions}
                                     onChange={handleEthnicityChange}
                                     value={selectedEthnicity}
-                                    styles={getCustomStyles(isDarkMode)}
+                                    styles={getCustomStyles(darkTheme)}
                                     placeholder="Select your ethnicity"
                                 />
                             </div>
@@ -476,7 +484,7 @@ const BiometricForm = () => {
                                     options={languageOptions}
                                     onChange={handleLanguagesChange}
                                     value={selectedLanguages}
-                                    styles={getCustomStyles(isDarkMode)}
+                                    styles={getCustomStyles(darkTheme)}
                                     placeholder="Select a language"
                                 />
                             </div>
@@ -492,7 +500,7 @@ const BiometricForm = () => {
                                     options={exerciseFrequencyOptions}
                                     onChange={handleExerciseFrequencyChange}
                                     value={selectedExerciseFrequency}
-                                    styles={getCustomStyles(isDarkMode)}
+                                    styles={getCustomStyles(darkTheme)}
                                     placeholder="Select exercise frequency"
                                 />
                             </div>
@@ -508,7 +516,7 @@ const BiometricForm = () => {
                                     options={dietOptions}
                                     onChange={handleDietChange}
                                     value={selectedDiet}
-                                    styles={getCustomStyles(isDarkMode)}
+                                    styles={getCustomStyles(darkTheme)}
                                     placeholder="Select diet"
                                 />
                             </div>
@@ -524,7 +532,7 @@ const BiometricForm = () => {
                                     options={sleepPatternsOptions}
                                     onChange={handleSleepPatternsChange}
                                     value={selectedSleepPatterns}
-                                    styles={getCustomStyles(isDarkMode)}
+                                    styles={getCustomStyles(darkTheme)}
                                     placeholder="Select sleep patterns"
                                 />
                             </div>
@@ -540,7 +548,7 @@ const BiometricForm = () => {
                                     options={alcoholConsumptionOptions}
                                     onChange={handleAlcoholConsumptionChange}
                                     value={selectedAlcoholConsumption}
-                                    styles={getCustomStyles(isDarkMode)}
+                                    styles={getCustomStyles(darkTheme)}
                                     placeholder="Select alcohol consumption level"
                                 />
                             </div>
@@ -556,7 +564,7 @@ const BiometricForm = () => {
                             {/*        options={moodOptions}*/}
                             {/*        onChange={handleMoodChange}*/}
                             {/*        value={selectedMood}*/}
-                            {/*        styles={getCustomStyles(isDarkMode)}*/}
+                            {/*        styles={getCustomStyles(darkTheme)}*/}
                             {/*        placeholder="Select your mood"*/}
                             {/*    />*/}
                             {/*</div>*/}

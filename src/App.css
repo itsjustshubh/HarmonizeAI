@@ -89,3 +89,8 @@
     transform: translateY(0);
   }
 }
+
+.slick-dots li button:before {
+  /* This will apply the color based on the isDarkMode state */
+  color: var(--slick-dot-color);
+}

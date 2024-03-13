@@ -1,8 +1,8 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
-import { PageTransitionWrapper } from './PageTransitionWrapper'; // Ensure correct path
+import React, {useEffect, useState} from 'react';
+import {BrowserRouter as Router, Route, Routes, useLocation} from 'react-router-dom';
+import { ThemeProvider } from './components/ThemeContext'; // Ensure correct path
 import { Analytics } from "@vercel/analytics/react"
+import ErrorBoundary from "./components/ErrorBoundary";
 
 // Import your page components
 import IntroSplashScreen from './components/IntroSplashScreen';
@@ -11,9 +11,12 @@ import SpotifyLogin from './components/SpotifyLogin';
 import BiometricForm from './components/BiometricForm';
 import PlaylistDisplay from './components/PlaylistDisplay';
 import OutroPage from './components/OutroPage';
-import ErrorBoundary from "./components/ErrorBoundary";
 import LoadingPlaylist from "./components/LoadingPlaylist";
 import NotFoundPage from "./components/NotFoundPage";
+import {MoonIcon, SunIcon} from "@heroicons/react/solid";
+import {AnimatePresence} from "framer-motion";
+import {PageTransitionWrapper} from "./PageTransitionWrapper";
+import ThemeSwitch from "./components/ThemeSwitch";
 
 function AnimatedRoutes() {
     const location = useLocation();
@@ -35,15 +38,41 @@ function AnimatedRoutes() {
 }
 
 function App() {
+    const [darkTheme, setDarkTheme] = useState(true);
+
+    useEffect(() => {
+        // Apply the theme class to the body element
+        if (darkTheme) {
+            document.body.classList.add('dark');
+        } else {
+            document.body.classList.remove('dark');
+        }
+    }, [darkTheme]); // Re-run effect when darkTheme state changes
+
+    const toggleTheme = () => {
+        setDarkTheme(!darkTheme);
+    };
+
     return (
         <Router>
-            <ErrorBoundary>
-            <div
-                className="bg-gradient-to-r from-green-400 to-blue-500 dark:from-gray-700 dark:to-gray-900 min-h-screen flex items-center justify-center px-5 py-5 p-6">
-                <AnimatedRoutes/>
-            </div>
-            </ErrorBoundary>
-            <Analytics/>
+            <ThemeProvider>
+                <ErrorBoundary>
+                    <ThemeSwitch />
+
+                    <div
+                        className="bg-gradient-to-r from-green-400 to-blue-500 dark:from-gray-700 dark:to-gray-900 min-h-screen flex items-center justify-center px-5 py-5 p-6">
+                        <AnimatedRoutes/>
+                    </div>
+
+                    {/*<button*/}
+                    {/*    onClick={toggleTheme}*/}
+                    {/*    className="fixed top-10 right-10 bg-blue-500 dark:bg-gray-700 text-white p-2 rounded-full focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-gray-500 transition duration-300"*/}
+                    {/*>*/}
+                    {/*    {darkTheme ? <SunIcon className="h-6 w-6"/> : <MoonIcon className="h-6 w-6"/>}*/}
+                    {/*</button>*/}
+                </ErrorBoundary>
+                <Analytics/>
+            </ThemeProvider>
         </Router>
     );
 }
