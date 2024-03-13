@@ -13,24 +13,51 @@ const LoadingPlaylist = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        let sio;
+        let baseUrl;
 
         if (process.env.NODE_ENV === 'production') {
-            sio = socketio('https://emotional-analysis-backend-2fe05a1b127e.herokuapp.com/');
+            baseUrl = 'https://emotional-analysis-backend-2fe05a1b127e.herokuapp.com/';
         } else {
-            sio = socketio('http://127.0.0.1:5000');
+            baseUrl = 'http://127.0.0.1:5000';
         }
 
+        const sio = socketio(baseUrl, {
+            transports: ['websocket', 'polling'],
+            upgrade: true,
+            forceNew: true
+        });
+
+        sio.on('connect', () => {
+            console.log('Connected to the server.');
+        });
+
         sio.on('progress', (data) => {
+            console.log("Progress Update:", data);
             setMessages(prevMessages => [...prevMessages, data]);
         });
 
         sio.on('completed', (data) => {
+            console.log("Analysis Completed:", data);
             setFinalResults(data.results);
             sio.disconnect();
         });
 
-        return () => sio.disconnect();
+        sio.on('connect_error', (error) => {
+            console.error('Connection Error:', error);
+        });
+
+        sio.on('error', (error) => {
+            console.error('Error:', error);
+        });
+
+        sio.on('disconnect', () => {
+            console.log('Disconnected from server.');
+        });
+
+        // Cleanup function
+        return () => {
+            sio.disconnect();
+        };
     }, []);
 
     const handleLogout = () => {
