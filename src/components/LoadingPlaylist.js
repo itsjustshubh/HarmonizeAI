@@ -13,7 +13,13 @@ const LoadingPlaylist = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const sio = socketio('http://127.0.0.1:5000');
+        let sio;
+
+        if (process.env.NODE_ENV === 'production') {
+            sio = socketio('https://emotional-analysis-backend-2fe05a1b127e.herokuapp.com/');
+        } else {
+            sio = socketio('http://127.0.0.1:5000');
+        }
 
         sio.on('progress', (data) => {
             setMessages(prevMessages => [...prevMessages, data]);

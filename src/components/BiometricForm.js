@@ -11,6 +11,7 @@ import {useTheme} from "./ThemeContext";
 import customDarkLogo from "../icons/dark-logo.png";
 import customLightLogo from "../icons/light-logo.png";
 import ThemeSwitch from "./ThemeSwitch";
+import socketio from "socket.io-client";
 
 const genderOptions = [
     { value: 'male', label: 'Male' },
@@ -331,6 +332,9 @@ const BiometricForm = () => {
         </div>
     );
 
+    const [requestSent, setRequestSent] = useState(false);
+
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -357,8 +361,15 @@ const BiometricForm = () => {
         };
 
         try {
-            // Send the data to the server
-            const response = await fetch('http://127.0.0.1:5000/analyze-emotion', {
+            let baseUrl;
+
+            if (process.env.NODE_ENV === 'production') {
+                baseUrl = 'https://emotional-analysis-backend-2fe05a1b127e.herokuapp.com';
+            } else {
+                baseUrl = 'http://127.0.0.1:5000';
+            }
+
+            const response = await fetch(baseUrl + '/analyze-emotion', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
