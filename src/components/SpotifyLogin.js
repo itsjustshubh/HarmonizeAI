@@ -217,6 +217,9 @@ const SpotifyLogin = () => {
         const scopes = [
             'user-read-private',
             'user-read-email',
+            // Add the following scopes for playlist modification
+            'playlist-modify-private',
+            'playlist-modify-public',
             'user-read-recently-played',
             'user-library-read',
             'user-top-read' // Include this scope

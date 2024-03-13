@@ -12,6 +12,7 @@ import BiometricForm from './components/BiometricForm';
 import PlaylistDisplay from './components/PlaylistDisplay';
 import OutroPage from './components/OutroPage';
 import ErrorBoundary from "./components/ErrorBoundary";
+import LoadingPlaylist from "./components/LoadingPlaylist";
 
 function AnimatedRoutes() {
     const location = useLocation();
@@ -23,6 +24,7 @@ function AnimatedRoutes() {
                 <Route path="/intro" element={<PageTransitionWrapper><IntroPage /></PageTransitionWrapper>} />
                 <Route path="/spotify-login" element={<PageTransitionWrapper><SpotifyLogin /></PageTransitionWrapper>} />
                 <Route path="/biometric-form" element={<PageTransitionWrapper><BiometricForm /></PageTransitionWrapper>} />
+                <Route path="/loading-playlist" element={<PageTransitionWrapper><LoadingPlaylist /></PageTransitionWrapper>} />
                 <Route path="/playlist" element={<PageTransitionWrapper><PlaylistDisplay /></PageTransitionWrapper>} />
                 <Route path="/outro" element={<PageTransitionWrapper><OutroPage /></PageTransitionWrapper>} />
             </Routes>

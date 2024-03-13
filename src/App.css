@@ -76,3 +76,16 @@
   from, to { border-color: transparent }
   50% { border-color: black; } /* Change to match the color of your text */
 }
+
+.message-box {
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

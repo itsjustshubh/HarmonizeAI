@@ -244,11 +244,6 @@ const BiometricForm = () => {
     const [isModified, setIsModified] = useState(false);
     const navigate = useNavigate();
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        navigate('/playlist');
-    };
-
     useEffect(() => {
         const hasChanges =
             parseFloat(heartRate) !== randomUser.heartRate ||
@@ -326,6 +321,51 @@ const BiometricForm = () => {
             </div>
         </div>
     );
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        // Construct the data to send
+        const dataToSend = {
+            // Populate this object with your form data
+            // Example:
+            "data_limit": 10000,
+            "user_profile": {
+                "age": 21,
+                "gender": "female"
+            },
+            "user_predictions": [
+                {
+                    "heart-rate-bpm": 120,
+                    "breathing-rate-breaths-min": 24,
+                    "hrv-ms": 30,
+                    "skin-temp-c": 20,
+                    "emg-mv": 0.1,
+                    "bvp-unit": 0.2
+                }
+                // Include other predictions if necessary
+            ]
+        };
+
+        try {
+            // Send the data to the server
+            const response = await fetch('http://127.0.0.1:5000/analyze-emotion', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dataToSend)
+            });
+
+            const result = await response.json();
+            console.log(result);
+
+            // Redirect to LoadingPlaylist
+            navigate('/loading-playlist');
+        } catch (error) {
+            console.error('Error submitting biometric data:', error);
+        }
+    };
 
     // Main JSX for the form
     return (
